@@ -1,0 +1,93 @@
+<div class="container mt-4">
+  <button class="btn btn-primary mb-2" (click)="openAddModal()">Add Product</button>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of products">
+        <td>{{product.name}}</td>
+        <td>{{product.price}}</td>
+        <td>{{product.quantity}}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-2" (click)="openUpdateModal(product)">Update</button>
+          <button class="btn btn-sm btn-danger" (click)="confirmDelete(product)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Modal Add/Update -->
+  <div class="modal" [class.show]="showModal" style="display: block;" *ngIf="showModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ selectedProduct ? 'Update' : 'Add' }} Product</h5>
+          <button type="button" class="btn-close" (click)="showModal = false"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="productForm">
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input type="text" class="form-control" formControlName="name" />
+              <div *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched" class="text-danger">
+                Name must be 2-20 characters and contain only letters and numbers.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Price</label>
+              <input type="number" class="form-control" formControlName="price" />
+              <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched" class="text-danger">
+                Price must be between 1 and 100000.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Quantity</label>
+              <input type="number" class="form-control" formControlName="quantity" />
+              <div *ngIf="productForm.get('quantity')?.invalid && productForm.get('quantity')?.touched"
+                class="text-danger">
+                Quantity must be between 1 and 10000.
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="showModal = false">Cancel</button>
+          <button class="btn btn-primary" (click)="saveProduct()">{{ selectedProduct ? 'Update' : 'Add' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Delete Confirmation -->
+  <div class="modal" [class.show]="showDeleteModal" style="display: block;" *ngIf="showDeleteModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="btn-close" (click)="cancelDelete()"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete {{ productToDelete?.name }}?
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+          <button class="btn btn-danger" (click)="deleteProduct()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification -->
+  <div *ngIf="notification" class="alert alert-success fixed-top m-3">
+    {{ notification }}
+  </div>
+</div>
